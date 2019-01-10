@@ -1,0 +1,32 @@
+{
+  "extends": [
+    "plugin:flowtype/recommended",
+    "plugin:react/recommended",
+    "prettier/react",
+    "prettier/standard",
+    "prettier/flowtype"
+  ],
+  "plugins": [
+    "prettier",
+    "react",
+    "flowtype"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2017,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "rules": {
+      "prettier/prettier": "error",
+      "react/prop-types": 0,
+      "react/display-name": 0
+  },
+  "env": {
+      "es6": true,
+      "browser": true,
+      "node": true,
+      "jest": true
+  }
+}

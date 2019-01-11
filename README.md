@@ -2,21 +2,28 @@
 # Getting Started with Redhooks 
 
 A tiny React utility library for holding a predictable state container in your React apps. 
-Inspired by https://redux.js.org, it uses the experimental Hooks API and the Context API. 
+Inspired by https://redux.js.org, it uses the experimental Hooks API and the Context API.
 
 - [Motivation](#motivation)
 - [Basic Example](#basic-example)
 - [Apply Middleware](#apply-middleware)
 - [Usage with React Router](#usage-with-react-router)
 - [Isolating Redhooks Sub-Apps](#isolating-redhooks-sub-apps)
+- [Redhooks API Reference](#redhooks-api-reference)
 - [License](#license)
+
+# Installation
+```sh
+npm install --save redhooks
+```
 
 # Motivation
 
 In the https://reactjs.org/docs/hooks-custom.html docs a nice paragraph titled useYourImagination()  suggests to think on differents possible usages of the Hooks, this essentially is what Redhooks tries to do.
-Redhooks does not use any third party library, it depends on the new Hooks and the Context API.
-You do not need to install `react-redux` and then binds actions or `mapStateToProps` in your components because you can have access to the store directly from any of your function components by invoking `useStore` Redhooks api. For class Components a HOC named `connect` will map and pass the redhooks store to any class component which will be applied to.
-It also supports the use of middlware like `redux-thunk` or `redux-saga` or your custom middlware
+Redhooks does not use any third party library, it only depends on the new Hooks and the Context API.
+You do not need to install `react-redux` to connect your components to the store because you can have access to it directly from any of your function components by calling `useStore` Redhooks api.
+Hooks are not allowed within class Components, for using the store within them Redhooks exposes a HOC named `connect`.
+It also supports the use of middlwares like `redux-thunk` or `redux-saga` or your custom middlware conforming to the middlware's API.
 
 # Basic Example
 
@@ -27,8 +34,9 @@ Redhooks follows the exact same principles of redux which is inspired to.
 
 ## Store
 
+`store.js`
 ```js
-import Provider, { createStore, combineReducers } from "redhooks";
+import { createStore, combineReducers } from "redhooks";
 
 const helloReducer = (
   state = { phrase: "good morning" },
@@ -59,10 +67,19 @@ const rootReducer = combineReducers({ helloReducer, counterReducer });
 // const opts = { preloadedState: { counterReducer: 10 }, initialAction: { type: "INCREMENT" } }
 const store = createStore(rootReducer);
 
+export default store;
+```
+
+`App.js`
+```js
+import Provider from "redhooks";
+import store from "./store";
+
 function App() {
   return (
       <Provider store={store}>
         <DispatchAction />
+        <DispatchActionExpensive />
         <ReadFromStore />
       </Provider>
   );
@@ -72,8 +89,11 @@ const rootElement = document.getElementById("root");
 ReactDOM.render(<App />, rootElement);
 ```
 
-## Dispatching Sync and Async Actions
+## Dispatching Sync and Async Actions - No expensive rendering
+If your component does not perform an expensive rendering you can use `useStore` Redhooks API within your
+function Component in order to have access to the Redhooks store. Class or function components that perform expensive rendering can be connected to the store by using `connect` Redhooks HOC which takes care to avoid unnecessary re-rendering in order to improve the performance. But we will see it in action in the next paragraph.
 
+`./components/DispatchAction.js`
 ```js
 import React from "react";
 import { useStore } from "redhooks";
@@ -109,8 +129,35 @@ const DispatchAction = () => {
 export default DispatchAction;
 ```
 
-## Read From Store
+## Dispatching Sync and Async Actions - Expensive rendering
+For components wich perform expensive rendering the use of `connect` HOC helps to avoid unnecessary re-rendering.
 
+`./components/DispatchActionExpensive.js`
+```js
+import React from "react";
+import { connect } from "redhooks";
+
+const DispatchActionExpensive = props => (
+     <div>
+        <button onClick={() => props.dispatch({ type: "INCREMENT" })}>
+          Sync Increment Counter
+        </button>
+        <button
+          onClick={() =>
+            setTimeout(() => props.dispatch({ type: "DECREMENT" }), 3000)
+          }
+        >
+          Async Decrement Counter
+        </button>
+      </div>
+);
+
+export default connect()(DispatchActionExpensive);
+```
+
+## Use Store from a Function Component
+
+`./components/ReadFromStore.js`
 ```js
 import React from "react";
 import { useStore } from "redhooks";
@@ -127,10 +174,11 @@ const ReadFromStore = () => {
 };
 
 export default ReadFromStore;
-
 ```
 
-## Use Store From a Class Component
+> **Tips**: If your function component performs a expensive rendering you should use the `connect` HOC Redhooks API.
+
+## Use Store from a Class Component
 
 ```js
 import React, { Component } from "react";
@@ -138,8 +186,7 @@ import { connect } from "redhooks";
 
 class ReadFromStore extends Component {
   render() {
-    const { state } = this.props.redhooks;
-    const { helloReducer, counterReducer } = state;
+    const { helloReducer, counterReducer } = this.props;
     return (
         <section>
             <h1>{helloReducer.phrase}</h1>
@@ -149,7 +196,14 @@ class ReadFromStore extends Component {
   }
 };
 
-export default connect(ReadFromStore);
+function mapStateToProp(state, prevState) {
+  return {
+    helloReducer: state.helloReducer,
+    counterReducer: state.counterReducer
+  };
+}
+
+export default connect(mapStateToProp)(ReadFromStore);
 ```
 
 # Apply Middleware
@@ -173,10 +227,10 @@ const middlewares = [thunk, sagaMiddleware];
 
 const store = createStore(reducer, { middlewares });
 
-// redux-saga needs to run as soon the store is ready
 function* helloSaga() {
   console.log("Hello Sagas!");
 }
+// redux-saga needs to run as soon the store is ready
 store.onload = () => sagaMiddleware.run(helloSaga);
 
 render(
@@ -233,8 +287,7 @@ render(<App store={store} />, document.getElementById('app'))
 
 ```js
 import React from "react";
-
-import Provider, { createStore } from "./tt";
+import Provider, { createStore } from "redhooks";
 import ReadFromStore from "./components/ReadFromStore";
 import Footer from "./components/Footer";
 
@@ -278,6 +331,116 @@ function App() {
 
 const rootElement = document.getElementById("root");
 ReactDOM.render(<App />, rootElement);
+```
+
+# Redhooks API Reference
+
+* [createStore](#createStore)
+* [combineReducers](#combineReducers)
+* [connect](#connect)
+* [Provider](#Provider)
+* [useStore](#useStore)
+
+## createStore
+```js
+createStore(reducer, [opts])
+```
+`createStore` returns the store object to be passed to the `<Provider store={store} />`.
+* The `reducer` argument is the is your reducer function or a function returned by `combineReducers` if your
+store needs more then one reducer.
+* The `opts` optional argument is an object which allows you to pass a `preloadedState`, `initialAction` and `middlewares`.
+> The store is ready after the Provider is mounted, an `onload` event will be triggered at that time.
+
+#### Example
+```js
+const opts = {
+    preloadedState: 1,
+    initialAction: { type: "DECREMENT" },
+    middlewares: [thunk, sagaMiddleware, logger]
+};
+const store = createStore(reducer, opts);
+store.onload = dispatch => dispatch({ type: "INCREMENT" });
+```
+
+## combineReducers
+```js
+combineReducers(reducers)
+```
+`combineReducers` combines an object whose props are different reducer functions, into a single reducer function
+* The `reducers` argument is an object whose values correspond to different reducing functions that need to be combined into one.
+
+#### Example
+```js
+const rootReducer = combineReducers({ counterReducer, otherReducer })
+const store = createStore(rootReducer)
+```
+
+## connect
+```js
+connect([mapStateToProps], [mapDispatchToProps])
+```
+`connect` function connects a React component to a Redhooks store. It returns a connected component class that wraps the component you passed in taking care to avoid unnecessary re-rendering. It should be used if your class or function components perform expensive rendering.
+
+* If a `mapStateToProps` function is passed, your component will be subscribed to Redhooks store. Any time the store is updated, mapStateToProps will be called. The results of mapStateToProps must be a plain object, which will be merged into your component’s props. If you don't want to connect to Redhooks store, pass undefined in place of mapStateToProps.
+* `mapDispatchToProps` if passed may be either a function that must return a plain object whose values are functions or a plain object whose values are functions. In both cases the props of the returned object will be merged in your component’s props. If is not passed your component will receive `dispatch` prop by default.
+
+#### Example
+```js
+const mapStateToProps = (state, prevState, ownProps) => ({ counter: state.counter })
+const mapDispatchToProps = dispatch => ({ increment: action => dispatch({ type: action })})
+// or
+const mapDispatchToProps = { increment: type => ({ type })}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ReactComponent)
+```
+
+## Provider
+The `<Provider />` makes the Redhooks store available to any nested components.
+
+#### Example
+```js
+import React from "react";
+import Provider from "redhooks";
+import store from "./store";
+import ReadFromStore from "./components/ReadFromStore";
+import Footer from "./components/Footer";
+
+export default function App() {
+  return (
+    <Provider store={store}>
+      <DispatchAction />
+      <ReadFromStore />
+    </Provider>
+  );
+}
+```
+
+## useStore
+```js
+useStore()
+```
+`useStore` can be only used within a function component and it returns the `store`.
+* The `store` is an object whose props are the `state` and the `dispatch`.
+
+#### Example
+```js
+import React from "react";
+import { useStore } from "redhooks";
+
+const Example = () => {
+  const { state, dispatch } = useStore(); // do not use it within a Class Component
+  const { counterReducer } = state;
+  return (
+    <section>
+      <span>{counterReducer}</span>
+      <button onClick={() => dispatch({ type: "INCREMENT" })}>
+        Increment Counter
+      </button>
+    </section>
+  );
+};
+
+export default Example;
 ```
 
 # License

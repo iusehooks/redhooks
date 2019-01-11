@@ -1,4 +1,6 @@
 import { createContext, useContext } from "react";
+import isPlainObject from "./utils/isPlainObject";
+import objValueFunc from "./utils/objValueFunc";
 
 const Context = createContext();
 
@@ -27,9 +29,9 @@ export const createStore = (reducer, opts = {}) => {
     throw new Error("The reducer must be a function");
   }
 
-  if (typeof opts !== "object" || opts === null) {
+  if (!isPlainObject(opts)) {
     throw new Error(
-      "You are passing null as opts. It must be a object { preloadedState, initialAction, middlewares }"
+      "Argument opts invalid in createStore(reducer, [opts]). It must be a object { preloadedState, initialAction, middlewares }"
     );
   }
 
@@ -41,19 +43,14 @@ export const createStore = (reducer, opts = {}) => {
     );
   }
 
-  if (
-    typeof initialAction !== "object" ||
-    initialAction === null ||
-    initialAction.constructor === Array
-  ) {
+  if (!isPlainObject(initialAction)) {
     throw new Error(
       "Invalid initialAction, an action has to be an object like { type: 'INIT', payload: 'hello' }"
     );
   }
 
   if (middlewares !== null && middlewares.constructor === Array) {
-    const allFunction = middlewares.every(elm => typeof elm === "function");
-    if (!allFunction) {
+    if (!objValueFunc(middlewares)) {
       throw new Error(
         "You are passing an invalid middleware. A middleware must be a function"
       );

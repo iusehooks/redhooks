@@ -1,5 +1,5 @@
 import { createStore } from "../src/store";
-import { counterReducer, genericReducer } from "./helpers/reducers";
+import { counterReducer } from "./helpers/reducers";
 
 describe("createStore", () => {
   it("should create a store and initialized the state given a reducer function", () => {
@@ -13,6 +13,7 @@ describe("createStore", () => {
     expect(() => createStore(null)).toThrow();
     expect(() => createStore(1)).toThrow();
     expect(() => createStore("hello")).toThrow();
+    expect(() => createStore([])).toThrow();
   });
 
   it("should throw if the opts passed as argument is not a object", () => {
@@ -20,6 +21,7 @@ describe("createStore", () => {
     expect(() => createStore(counterReducer, null)).toThrow();
     expect(() => createStore(counterReducer, 1)).toThrow();
     expect(() => createStore(counterReducer, "hello")).toThrow();
+    expect(() => createStore(counterReducer, [])).toThrow();
   });
 
   it("should create a store with a preloadedState state", () => {
@@ -67,6 +69,12 @@ describe("createStore", () => {
 
     opts = { initialAction: false };
     expect(() => createStore(counterReducer, opts)).toThrow();
+  });
+
+  it("should create a store with a middlewares", () => {
+    const opts = { middlewares: [() => null] };
+    const store = createStore(counterReducer, opts);
+    expect(store.initialState).toBe(0);
   });
 
   it("should throw if middlewares is an invalid type or if not contain functions as elements", () => {

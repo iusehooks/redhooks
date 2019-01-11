@@ -1,21 +1,21 @@
 {
   "name": "redhooks",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.0",
   "description": "Predictable state container for React apps written using Hooks.",
   "main": "./build/index.js",
   "module": "./build/es/index.js",
-  "repository": "antoniopangallo/redhooks",
+  "repository": "github:iusehooks/redhooks",
   "scripts": {
     "build": "npm run clean && node ./build_config/build.js",
-    "clean": "rimraf build",
-    "prepare": "npm run lint && npm run test && npm run build",
+    "clean": "rimraf build coverage",
+    "prepare": "npm run clean && npm run lint && npm run test && npm run build",
     "lint": "eslint --ext .jsx --ext .js src __tests__ --fix",
     "pretest": "npm run lint",
     "test": "cross-env NODE_ENV=test jest -u",
     "test:watch": "npm run test -- --watch",
     "test:cov": "npm test -- --coverage"
   },
-  "author": "Antonio Pangallo",
+  "author": "Antonio Pangallo (https://github.com/antoniopangallo)",
   "files": [
     "build/index.js",
     "build/index.es.js",

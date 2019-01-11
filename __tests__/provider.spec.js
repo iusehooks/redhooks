@@ -3,7 +3,11 @@ import { render, fireEvent } from "react-testing-library";
 
 import Provider from "./../src";
 import { store, storeWithMiddlewares } from "./helpers/store";
-import { Increment, IncrementClassCPM } from "./helpers/components";
+import {
+  Increment,
+  IncrementClassCPM,
+  BasicComponentEmptyAction
+} from "./helpers/components";
 
 const mountProvider = ({ props, children } = {}) =>
   render(<Provider {...props}>{children}</Provider>);
@@ -44,6 +48,15 @@ describe("Component => Provider", () => {
     expect(button.textContent).toBe("0");
     fireEvent.click(button);
     expect(button.textContent).toBe("1");
+  });
+
+  it("should state not change when an empty action is dispatched", () => {
+    const children = [<BasicComponentEmptyAction key="1" />];
+    const props = { store, children };
+    const { container } = mountProvider({ props, children });
+    const button = container.firstChild;
+    fireEvent.click(button);
+    expect(button.textContent).toBe("0");
   });
 
   it("should a dispatched action go through the middlewares", done => {

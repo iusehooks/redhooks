@@ -22,7 +22,7 @@ export default ({ store, children }) => {
 
   useEffect(
     () => {
-      onload && onload();
+      onload && onload(storeContext);
     },
     [middlewares]
   );
@@ -40,8 +40,10 @@ function storeHooks(reducer, initialState, middlewares, keyState) {
       getState: () => stateProvider[keyState],
       dispatch: action => {
         const nextState = reducer(stateProvider[keyState], action);
-        stateProvider[keyState] = nextState; // update the state reference
-        setState(nextState);
+        if (nextState !== stateProvider[keyState]) {
+          stateProvider[keyState] = nextState; // update the state reference
+          setState(nextState);
+        }
         return action;
       }
     }),

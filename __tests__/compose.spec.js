@@ -1,3 +1,5 @@
+/* https://github.com/reduxjs/redux/blob/master/test/compose.spec.js */
+
 import compose from "./../src/utils/compose";
 
 describe("Utils => compose", () => {

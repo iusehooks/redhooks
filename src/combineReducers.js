@@ -1,3 +1,5 @@
+import isPlainObject from "./utils/isPlainObject";
+
 /**
  * It combines an object whose props are different reducer functions, into a single
  * reducer function. It will call every child reducer, and gather their results
@@ -6,14 +8,15 @@
  *
  * @param {Object} reducers An object whose values correspond to different
  * reducer functions that need to be combined into one. The reducers must never return
- * undefined for any action or being initilized as undefined. Any unrecognized action must return the current state.
+ * undefined for any action or being initilized as undefined.
+ * Any unrecognized action must return the current state.
  *
  * @returns {Function} A reducer function that invokes every reducer inside the
  * passed object, and builds a state object with the same shape.
  */
 
 export default function(reducers = {}) {
-  if (typeof reducers !== "object" || reducers === null) {
+  if (!isPlainObject(reducers)) {
     throw new Error(
       "The type passed as argument is not valid. It accepts object which values are functions"
     );

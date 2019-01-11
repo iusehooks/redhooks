@@ -1,4 +1,3 @@
-// Jest needs to turn on the transpilation of ES2015 modules { loose: true,  modules: false }
 let presets = [
   [
     "@babel/preset-env",

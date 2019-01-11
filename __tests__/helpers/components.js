@@ -10,13 +10,36 @@ export const Increment = () => {
 class IncrementConnected extends React.Component {
   constructor(props) {
     super(props);
-    const { dispatch } = props.redhooks;
+    const { dispatch } = props;
     this._increment = () => dispatch({ type: "INCREMENT" });
   }
   render() {
-    const { state } = this.props.redhooks;
-    return <button onClick={this._increment}>{state.counterReducer}</button>;
+    const { counterReducer } = this.props;
+    return <button onClick={this._increment}>{counterReducer}</button>;
   }
 }
 
-export const IncrementClassCPM = connect(IncrementConnected);
+function mapStateToProps(state) {
+  return {
+    counterReducer: state.counterReducer
+  };
+}
+
+export const IncrementClassCPM = connect(mapStateToProps)(IncrementConnected);
+
+export const BasicComponent = props => (
+  <button onClick={() => props.increment("INCREMENT")}>
+    {props.counterReducer}
+  </button>
+);
+
+export const BasicComponentNoMapDispatch = props => (
+  <button onClick={() => props.dispatch({ type: "INCREMENT" })}>
+    {props.counterReducer}
+  </button>
+);
+
+export const BasicComponentEmptyAction = () => {
+  const { state, dispatch } = useStore();
+  return <button onClick={() => dispatch({})}>{state.counterReducer}</button>;
+};

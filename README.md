@@ -10,6 +10,7 @@ Inspired by https://redux.js.org, it uses the experimental Hooks API and the Con
 - [Usage with React Router](#usage-with-react-router)
 - [Isolating Redhooks Sub-Apps](#isolating-redhooks-sub-apps)
 - [Redhooks API Reference](#redhooks-api-reference)
+- [CodeSandbox Examples](#codesandbox-examples)
 - [License](#license)
 
 # Installation
@@ -29,7 +30,7 @@ It also supports the use of middlwares like `redux-thunk` or `redux-saga` or you
 
 Redhooks follows the exact same principles of redux which is inspired to.
 * the whole state of your app is stored in an object tree inside a single store.
-* state is ready only. So the only way to change the state is to dispatch an action, an object describing what happened.
+* state is read only. So the only way to change the state is to dispatch an action, an object describing what happened.
 * to specify how the actions transform the state tree, you write pure reducers.
 
 ## Store
@@ -63,9 +64,10 @@ const counterReducer = (state = 0, { type, payload }) => {
 
 const rootReducer = combineReducers({ helloReducer, counterReducer });
 
-// eventually we can pass as second arg an opts object like:
-// const opts = { preloadedState: { counterReducer: 10 }, initialAction: { type: "INCREMENT" } }
 const store = createStore(rootReducer);
+// eventually we can pass to createStore as second arg an opts object like:
+// const opts = { preloadedState: { counterReducer: 10 }, initialAction: { type: "INCREMENT" } }
+// const store = createStore(rootReducer. opts);
 
 export default store;
 ```
@@ -89,9 +91,9 @@ const rootElement = document.getElementById("root");
 ReactDOM.render(<App />, rootElement);
 ```
 
-## Dispatching Sync and Async Actions - No expensive rendering
+## Dispatching Sync and Async Actions - No expensive rendering operation
 If your component does not perform an expensive rendering you can use `useStore` Redhooks API within your
-function Component in order to have access to the Redhooks store. Class or function components that perform expensive rendering can be connected to the store by using `connect` Redhooks HOC which takes care to avoid unnecessary re-rendering in order to improve the performance. But we will see it in action in the next paragraph.
+function Component in order to have access to the Redhooks store. Class or function components that perform expensive rendering operations can be connected to the store by using `connect` Redhooks HOC which takes care to avoid unnecessary re-rendering in order to improve the performance. But we will see it in action in the next paragraph.
 
 `./components/DispatchAction.js`
 ```js
@@ -129,7 +131,7 @@ const DispatchAction = () => {
 export default DispatchAction;
 ```
 
-## Dispatching Sync and Async Actions - Expensive rendering
+## Dispatching Sync and Async Actions - Expensive rendering operation
 For components wich perform expensive rendering the use of `connect` HOC helps to avoid unnecessary re-rendering.
 
 `./components/DispatchActionExpensive.js`
@@ -338,6 +340,7 @@ ReactDOM.render(<App />, rootElement);
 * [createStore](#createStore)
 * [combineReducers](#combineReducers)
 * [connect](#connect)
+* [bindActionCreators](#bindActionCreators)
 * [Provider](#Provider)
 * [useStore](#useStore)
 
@@ -359,7 +362,7 @@ const opts = {
     middlewares: [thunk, sagaMiddleware, logger]
 };
 const store = createStore(reducer, opts);
-store.onload = dispatch => dispatch({ type: "INCREMENT" });
+store.onload = ({ dispatch }) => dispatch({ type: "INCREMENT" });
 ```
 
 ## combineReducers
@@ -381,8 +384,8 @@ connect([mapStateToProps], [mapDispatchToProps])
 ```
 `connect` function connects a React component to a Redhooks store. It returns a connected component class that wraps the component you passed in taking care to avoid unnecessary re-rendering. It should be used if your class or function components perform expensive rendering.
 
-* If a `mapStateToProps` function is passed, your component will be subscribed to Redhooks store. Any time the store is updated, mapStateToProps will be called. The results of mapStateToProps must be a plain object, which will be merged into your component’s props. If you don't want to connect to Redhooks store, pass undefined in place of mapStateToProps.
-* `mapDispatchToProps` if passed may be either a function that must return a plain object whose values are functions or a plain object whose values are functions. In both cases the props of the returned object will be merged in your component’s props. If is not passed your component will receive `dispatch` prop by default.
+* If a `mapStateToProps` function is passed, your component will be subscribed to Redhooks store. Any time the store is updated, mapStateToProps will be called. The results of mapStateToProps must be a plain object, which will be merged into your component’s props. If you don't want to connect to Redhooks store, pass null or undefined in place of mapStateToProps.
+* `mapDispatchToProps` if passed may be either a function that must return a plain object whose values are functions or a plain object whose values are [action creator](#action-creator) functions. In both cases the props of the returned object will be merged in your component’s props. If is not passed your component will receive `dispatch` prop by default.
 
 #### Example
 ```js
@@ -392,6 +395,70 @@ const mapDispatchToProps = dispatch => ({ increment: action => dispatch({ type: 
 const mapDispatchToProps = { increment: type => ({ type })}
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReactComponent)
+```
+
+## bindActionCreators
+```js
+bindActionCreators(actionCreators, dispatch)
+```
+
+`bindActionCreators` turns an object whose values are [action creator](#action-creator), into an object with the
+same keys, but with every function wrapped into a `dispatch` call so they
+may be invoked directly.
+ 
+* `actionCreators` An object whose values are action creator functions or plain objects whose values are action creator functions
+* `dispatch` it is the dispatch function available on your Redhooks store.
+
+#### Action creator
+An action creator is a function that creates an action.
+
+```js
+type ActionCreator = (...args: any) => Action | AsyncAction
+```
+
+#### Example
+`actions.js`
+
+```js
+export const action_1 = action_1 => action_1
+export const action_2 = action_2 => action_2
+export const action_3 = action_3 => action_3
+```
+
+`YourComponentConnected.js`
+```js
+import React from "react";
+import { connect, bindActionCreators } from "redhooks";
+import * as actions from "./actions";
+
+const YourComponent = ({ actions, counter }) => (
+  <div>
+    <h1>counter</h1>
+    <button onClick={actions.action_1}>action_1</button>
+    <button onClick={actions.action_2}>action_2</button>
+    <button onClick={actions.action_2}>action_3</button>
+  </div>
+);
+
+const mapStateToProps = state => ({
+  counter: state.counter
+});
+
+const mapDispatchToProps = dispatch => ({
+  actions: bindActionCreators(actions, dispatch)
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(YourComponent);
+
+// or simply
+
+export default connect(
+  mapStateToProps,
+  { actions }
+)(YourComponent);
 ```
 
 ## Provider
@@ -442,6 +509,13 @@ const Example = () => {
 
 export default Example;
 ```
+
+# CodeSandbox Examples
+
+Following few open source projects implemented with `redux` have been migrated to `redhooks`:
+
+* Shopping Cart: [Sandbox](https://codesandbox.io/s/5yn1258y4l)
+* TodoMVC: [Sandbox](https://codesandbox.io/s/7jyq991p90)
 
 # License
 

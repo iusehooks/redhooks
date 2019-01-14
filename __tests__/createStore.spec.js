@@ -81,6 +81,18 @@ describe("createStore", () => {
     let opts = { middlewares: null };
     expect(() => createStore(counterReducer, opts)).toThrow();
 
+    opts = { middlewares: () => null };
+    expect(() => createStore(counterReducer, opts)).toThrow();
+
+    opts = { middlewares: 3 };
+    expect(() => createStore(counterReducer, opts)).toThrow();
+
+    opts = { middlewares: "test" };
+    expect(() => createStore(counterReducer, opts)).toThrow();
+
+    opts = { middlewares: false };
+    expect(() => createStore(counterReducer, opts)).toThrow();
+
     opts = { middlewares: [() => null, undefined, false, 3, "hello"] };
     expect(() => createStore(counterReducer, opts)).toThrow();
   });

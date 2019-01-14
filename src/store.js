@@ -39,13 +39,13 @@ export const createStore = (reducer, opts = {}) => {
 
   if (typeof preloadedState === "function") {
     throw new Error(
-      "You are passing a function as preloadedState, it only accepts objects and primitives data types"
+      "You are passing a function as preloadedState, it only accepts plain objects and primitives data types"
     );
   }
 
   if (!isPlainObject(initialAction)) {
     throw new Error(
-      "Invalid initialAction, an action has to be an object like { type: 'INIT', payload: 'hello' }"
+      "Invalid initialAction, an action has to be a plain object like { type: 'ADD', payload: 1 }"
     );
   }
 

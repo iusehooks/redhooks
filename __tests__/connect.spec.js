@@ -63,6 +63,26 @@ describe("Utils => connect", () => {
     fireEvent.click(button);
     expect(button.textContent).toBe("1");
 
+    mapDispatchToProps = {
+      dispatch: action => action,
+      nested: { add: type => dispatch({ type }) },
+      ingored: "hi"
+    };
+
+    ConnectedCMP = connectCompNoMapDispatch(
+      mapStateToProps,
+      mapDispatchToProps
+    );
+    wrapper = render(
+      <Provider store={store}>
+        <ConnectedCMP />
+      </Provider>
+    );
+    button = wrapper.container.firstChild;
+    expect(button.textContent).toBe("0");
+    fireEvent.click(button);
+    expect(button.textContent).toBe("1");
+
     mapDispatchToProps = dispatch => ({});
 
     ConnectedCMP = connectCompNoMapDispatch(
@@ -152,7 +172,7 @@ describe("Utils => connect", () => {
     ).toThrow();
 
     mapDispatchToPropsWrong = dispatch => "";
-    ConnectedCMP = connectComp(mapStateToProps, mapDispatchToPropsWrong);
+    ConnectedCMP = connectComp(null, mapDispatchToPropsWrong);
     expect(() =>
       render(
         <Provider store={store}>
@@ -190,26 +210,11 @@ describe("Utils => connect", () => {
         </Provider>
       )
     ).toThrow();
-
-    mapDispatchToPropsWrong = dispatch => ({ increment: false });
-    ConnectedCMP = connectComp(mapStateToProps, mapDispatchToPropsWrong);
-    expect(() =>
-      render(
-        <Provider store={store}>
-          <ConnectedCMP />
-        </Provider>
-      )
-    ).toThrow();
-
-    mapDispatchToPropsWrong = { increment: "" };
-    expect(() =>
-      connectComp(mapStateToProps, mapDispatchToPropsWrong)
-    ).toThrow();
   });
 
   it("should throw if not valid args are passed", () => {
     const noop = () => {};
-    expect(() => connect(null)).toThrow();
+    expect(() => connect({})).toThrow();
     expect(() => connect([])).toThrow();
     expect(() => connect("")).toThrow();
     expect(() => connect(false)).toThrow();

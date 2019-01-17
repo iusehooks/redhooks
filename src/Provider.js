@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import createDispatch from "./utils/createDispatch";
 
 /**
@@ -9,16 +9,12 @@ import createDispatch from "./utils/createDispatch";
 let providersActive = 0;
 let stateProvider = {};
 
-const getKeyState = () => {
-  providersActive++;
-  return providersActive;
-};
+const getKeyState = () => ++providersActive;
 
 export default ({ store, children }) => {
   const { reducer, initialState, Context, middlewares, onload } = store;
-  const keyState = useMemo(() => getKeyState(), []);
 
-  const storeContext = storeHooks(reducer, initialState, middlewares, keyState);
+  const storeContext = storeHooks(reducer, initialState, middlewares);
 
   useEffect(
     () => {
@@ -30,13 +26,14 @@ export default ({ store, children }) => {
   return <Context.Provider value={storeContext}>{children}</Context.Provider>;
 };
 
-function storeHooks(reducer, initialState, middlewares, keyState) {
+function storeHooks(reducer, initialState, middlewares) {
   const [state, setState] = useState(initialState);
 
+  const [keyState] = useState(() => getKeyState());
   stateProvider[keyState] = state; // store the state reference
 
-  const storeAPI = useMemo(
-    () => ({
+  const [dispatch] = useState(() => {
+    const storeAPI = {
       getState: () => stateProvider[keyState],
       dispatch: action => {
         const nextState = reducer(stateProvider[keyState], action);
@@ -46,14 +43,9 @@ function storeHooks(reducer, initialState, middlewares, keyState) {
         }
         return action;
       }
-    }),
-    [setState]
-  );
-
-  const dispatch = useMemo(() => createDispatch(...middlewares)(storeAPI), [
-    middlewares,
-    storeAPI
-  ]);
+    };
+    return createDispatch(...middlewares)(storeAPI);
+  });
 
   return { state, dispatch };
 }

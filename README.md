@@ -516,6 +516,7 @@ Following few open source projects implemented with `redux` have been migrated t
 
 * Shopping Cart: [Sandbox](https://codesandbox.io/s/5yn1258y4l)
 * TodoMVC: [Sandbox](https://codesandbox.io/s/7jyq991p90)
+* Tree-View: [Sandbox](https://codesandbox.io/s/rmw98onnlp)
 
 # License
 

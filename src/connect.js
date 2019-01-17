@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useStore } from "./store";
 import isPlainObject from "./utils/isPlainObject";
 import bindActionCreators from "./bindActionCreators";
@@ -44,13 +44,22 @@ export default (
     );
   }
 
-  let prevState;
-  let prevPropsMapped;
-  let change = false;
+  let prevState = {};
+  let prevPropsMapped = {};
+  let changeState = {};
+  let keyID = 0;
   return Comp => props => {
     const { state, dispatch } = useStore();
+    const [keyCpm] = useState(() => ++keyID);
 
-    const propsMapped = mapStateToProps(state, prevState || state, props);
+    changeState[keyCpm] =
+      changeState[keyCpm] !== undefined ? changeState[keyCpm] : false;
+
+    const propsMapped = mapStateToProps(
+      state,
+      prevState[keyCpm] || state,
+      props
+    );
     if (!isPlainObject(propsMapped)) {
       throw new Error(
         errMsg(
@@ -62,7 +71,7 @@ export default (
       );
     }
 
-    const dispatchProps = useMemo(() => {
+    const [dispatchProps] = useState(() => {
       const propsDispatch = mapDispatchToProps(dispatch, props);
       if (!isPlainObject(propsDispatch)) {
         throw new Error(
@@ -76,20 +85,20 @@ export default (
       }
       const { length } = Object.keys(propsDispatch);
       return length > 0 ? propsDispatch : { dispatch };
-    }, []);
+    });
 
-    change = checkPropChange(
+    changeState[keyCpm] = checkPropChange(
       propsMapped,
-      prevPropsMapped || propsMapped,
-      change
+      prevPropsMapped[keyCpm] || propsMapped,
+      changeState[keyCpm]
     );
 
-    prevPropsMapped = propsMapped;
-    prevState = state;
+    prevPropsMapped[keyCpm] = propsMapped;
+    prevState[keyCpm] = state;
 
     const CPM = useMemo(
       () => <Comp {...props} {...propsMapped} {...dispatchProps} />,
-      [change]
+      [changeState[keyCpm]]
     );
     return CPM;
   };

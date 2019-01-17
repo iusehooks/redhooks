@@ -2,7 +2,7 @@
 # Getting Started with Redhooks 
 
 A tiny React utility library for holding a predictable state container in your React apps. 
-Inspired by https://redux.js.org, it uses the experimental Hooks API and the Context API.
+Inspired by https://redux.js.org, it reimplements reduxjs concept using the experimental Hooks API and the Context API.
 
 - [Motivation](#motivation)
 - [Basic Example](#basic-example)
@@ -39,7 +39,8 @@ Redhooks follows the exact same principles of redux which is inspired to.
 ```js
 import { createStore, combineReducers } from "redhooks";
 
-const helloReducer = (
+// function reducer
+const hello = (
   state = { phrase: "good morning" },
   { type, payload }
 ) => {
@@ -51,7 +52,8 @@ const helloReducer = (
   }
 };
 
-const counterReducer = (state = 0, { type, payload }) => {
+// function reducer
+const counter = (state = 0, { type, payload }) => {
   switch (type) {
     case "INCREMENT":
       return state + 1;
@@ -62,11 +64,11 @@ const counterReducer = (state = 0, { type, payload }) => {
   }
 };
 
-const rootReducer = combineReducers({ helloReducer, counterReducer });
+const rootReducer = combineReducers({ hello, counter });
 
 const store = createStore(rootReducer);
 // eventually we can pass to createStore as second arg an opts object like:
-// const opts = { preloadedState: { counterReducer: 10 }, initialAction: { type: "INCREMENT" } }
+// const opts = { preloadedState: { counter: 10 }, initialAction: { type: "INCREMENT" } }
 // const store = createStore(rootReducer. opts);
 
 export default store;
@@ -166,11 +168,11 @@ import { useStore } from "redhooks";
 
 const ReadFromStore = () => {
   const { state } = useStore();
-  const { helloReducer, counterReducer } = state;
+  const { hello, counter } = state;
   return (
     <section>
-      <h1>{helloReducer.phrase}</h1>
-      <span>{counterReducer}</span>
+      <h1>{hello.phrase}</h1>
+      <span>{counter}</span>
     </section>
   );
 };
@@ -188,11 +190,11 @@ import { connect } from "redhooks";
 
 class ReadFromStore extends Component {
   render() {
-    const { helloReducer, counterReducer } = this.props;
+    const { hello, counter } = this.props;
     return (
         <section>
-            <h1>{helloReducer.phrase}</h1>
-            <span>{counterReducer}</span>
+            <h1>{hello.phrase}</h1>
+            <span>{counter}</span>
         </section>
     );
   }
@@ -200,8 +202,8 @@ class ReadFromStore extends Component {
 
 function mapStateToProp(state, prevState) {
   return {
-    helloReducer: state.helloReducer,
-    counterReducer: state.counterReducer
+    hello: state.hello,
+    counter: state.counter
   };
 }
 
@@ -275,7 +277,7 @@ import rootReducer from "./reducers"
 import App from './App'
 
 const opts = {
-  preloadedState: { counterReducer: 9 },
+  preloadedState: { counter: 9 },
   initialAction: { type: "INCREMENT" },
   middlewares: [thunk]
 };
@@ -293,7 +295,7 @@ import Provider, { createStore } from "redhooks";
 import ReadFromStore from "./components/ReadFromStore";
 import Footer from "./components/Footer";
 
-const counterReducer = (state = 0, { type, payload }) => {
+const counter = (state = 0, { type, payload }) => {
   switch (type) {
     case "INCREMENT":
       return state + 1;
@@ -304,7 +306,7 @@ const counterReducer = (state = 0, { type, payload }) => {
   }
 };
 
-const store = createStore(counterReducer);
+const store = createStore(counter);
 
 export default function SubApp() {
   return (
@@ -374,7 +376,7 @@ combineReducers(reducers)
 
 #### Example
 ```js
-const rootReducer = combineReducers({ counterReducer, otherReducer })
+const rootReducer = combineReducers({ counter, otherReducer })
 const store = createStore(rootReducer)
 ```
 
@@ -444,17 +446,16 @@ const mapStateToProps = state => ({
   counter: state.counter
 });
 
+// a verbose way
 const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators(actions, dispatch)
 });
-
 export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(YourComponent);
 
 // or simply
-
 export default connect(
   mapStateToProps,
   { actions }
@@ -496,10 +497,10 @@ import { useStore } from "redhooks";
 
 const Example = () => {
   const { state, dispatch } = useStore(); // do not use it within a Class Component
-  const { counterReducer } = state;
+  const { counter } = state;
   return (
     <section>
-      <span>{counterReducer}</span>
+      <span>{counter}</span>
       <button onClick={() => dispatch({ type: "INCREMENT" })}>
         Increment Counter
       </button>

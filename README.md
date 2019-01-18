@@ -13,6 +13,8 @@ Inspired by https://redux.js.org, it reimplements reduxjs concept using the expe
 - [CodeSandbox Examples](#codesandbox-examples)
 - [License](#license)
 
+[![Build Status](https://travis-ci.org/iusehooks/redhooks.svg?branch=master)](https://travis-ci.org/iusehooks/redhooks)
+
 # Installation
 ```sh
 npm install --save redhooks
@@ -200,7 +202,7 @@ class ReadFromStore extends Component {
   }
 };
 
-function mapStateToProp(state, prevState) {
+function mapStateToProp(state, ownProps) {
   return {
     hello: state.hello,
     counter: state.counter
@@ -391,7 +393,7 @@ connect([mapStateToProps], [mapDispatchToProps])
 
 #### Example
 ```js
-const mapStateToProps = (state, prevState, ownProps) => ({ counter: state.counter })
+const mapStateToProps = (state, ownProps) => ({ counter: state.counter })
 const mapDispatchToProps = dispatch => ({ increment: action => dispatch({ type: action })})
 // or
 const mapDispatchToProps = { increment: type => ({ type })}

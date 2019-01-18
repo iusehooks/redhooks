@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef } from "react";
 import { useStore } from "./store";
 import isPlainObject from "./utils/isPlainObject";
 import bindActionCreators from "./bindActionCreators";
@@ -44,22 +44,20 @@ export default (
     );
   }
 
-  let prevState = {};
-  let prevPropsMapped = {};
-  let changeState = {};
-  let keyID = 0;
   return Comp => props => {
     const { state, dispatch } = useStore();
-    const [keyCpm] = useState(() => ++keyID);
 
-    changeState[keyCpm] =
-      changeState[keyCpm] !== undefined ? changeState[keyCpm] : false;
+    const propsMapped = mapStateToProps(state, props);
 
-    const propsMapped = mapStateToProps(
-      state,
-      prevState[keyCpm] || state,
-      props
-    );
+    /* useRef returns a mutable ref object whose .current property is initialized
+     * to the passed argument (initialValue). The returned object will persist for
+     * the full lifetime of the component.
+     */
+    const { current: innerState } = useRef({
+      change: false,
+      prevProps: propsMapped
+    });
+
     if (!isPlainObject(propsMapped)) {
       throw new Error(
         errMsg(
@@ -87,18 +85,17 @@ export default (
       return length > 0 ? propsDispatch : { dispatch };
     });
 
-    changeState[keyCpm] = checkPropChange(
+    innerState.change = checkPropChange(
       propsMapped,
-      prevPropsMapped[keyCpm] || propsMapped,
-      changeState[keyCpm]
+      innerState.prevProps,
+      innerState.change
     );
 
-    prevPropsMapped[keyCpm] = propsMapped;
-    prevState[keyCpm] = state;
+    innerState.prevProps = propsMapped;
 
     const CPM = useMemo(
       () => <Comp {...props} {...propsMapped} {...dispatchProps} />,
-      [changeState[keyCpm]]
+      [innerState.change]
     );
     return CPM;
   };

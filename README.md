@@ -1,7 +1,6 @@
+# <img src='https://raw.githubusercontent.com/iusehooks/redhooks/master/logo/logo.png' width="224" height='61' alt='Redhooks Logo' />
 
-# Getting Started with Redhooks 
-
-A tiny React utility library for holding a predictable state container in your React apps. 
+Redhooks is tiny React utility library for holding a predictable state container in your React apps. 
 Inspired by https://redux.js.org, it reimplements reduxjs concept using the experimental Hooks API and the Context API.
 
 - [Motivation](#motivation)

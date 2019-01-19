@@ -214,7 +214,18 @@ export default connect(mapStateToProp)(ReadFromStore);
 # Apply Middleware
 
 As for Redux, middleware is a way to extend Redhooks with custom functionality.
-Middleware are functions which receive Store's `dispatch` and `getState` as named arguments, and return a function.
+Middleware are functions which receive Store's `dispatch` and `getState` as named arguments, and return a function. Redhooks supports the use of the redux's middlwares like `redux-thunk`, `redux-saga` or you migth write a custom middlware conforming to middleware API. 
+
+## Custom middlware - Logger Example
+
+```js
+const logger = store => next => action => {
+  console.log('dispatching', action)
+  let result = next(action)
+  console.log('next state', store.getState())
+  return result
+}
+```
 
 ##  Use `redux-thunk` and `redux-saga`
 
@@ -253,15 +264,17 @@ App routing can be handled using [React Router](https://github.com/ReactTraining
 ```js
 import React from 'react'
 import Provider from 'redhooks'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Home from './Home'
 import About from './About'
 
 const App = ({ store }) => (
   <Provider store={store}>
     <Router>
-      <Route exact path="/" component={Home} />
-      <Route exact path="/about" component={About} />
+      <Switch>
+        <Route exact path="/" component={Home} />
+        <Route exact path="/about" component={About} />
+      </Switch>
     </Router>
   </Provider>
 )
@@ -519,6 +532,7 @@ Following few open source projects implemented with `redux` have been migrated t
 * Shopping Cart: [Sandbox](https://codesandbox.io/s/5yn1258y4l)
 * TodoMVC: [Sandbox](https://codesandbox.io/s/7jyq991p90)
 * Tree-View: [Sandbox](https://codesandbox.io/s/rmw98onnlp)
+* Saga-Middlware: [Sandbox](https://codesandbox.io/s/48pomo7rx7)
 
 # License
 

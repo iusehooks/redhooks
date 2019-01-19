@@ -70,7 +70,8 @@ export const createStore = (reducer, opts = {}) => {
 
 /**
   You can call `useStore()` only within a function Component. It returns an object { state, dispatch }.
-  To use the store from a class Component you have to use the `connect` HOC => export default connect(YourClassComponent)
+  To use the store from a class Component you have to use the `connect` HOC.
+  export default connect([mapStateToProps], [mapDispatchToProps])(YourClassComponent)
 */
 
 export const useStore = () => useContext(Context);

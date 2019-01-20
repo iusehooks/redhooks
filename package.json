@@ -1,6 +1,6 @@
 {
   "name": "redhooks",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "description": "Predictable state container for React apps written using Hooks.",
   "main": "./build/index.js",
   "module": "./build/es/index.js",

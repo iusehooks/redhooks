@@ -25,7 +25,7 @@ In the [Reactjs docs](https://reactjs.org/docs/hooks-custom.html) a nice paragra
 Redhooks does not use any third party library, it only depends on the new Hooks and the Context API.
 You do not need to install `react-redux` to connect your components to the store because you can have access to it directly from any of your function components by calling `useStore` Redhooks api.
 Hooks are not allowed within class Components, for using the store within them Redhooks exposes a HOC named `connect`.
-It also supports the use of middlwares like `redux-thunk` or `redux-saga` or your custom middlware conforming to the middlware's API.
+It also supports the use of middlewares like `redux-thunk` or `redux-saga` or your custom middleware conforming to the middleware's API.
 
 # Basic Example
 
@@ -218,9 +218,9 @@ export default connect(mapStateToProp)(ReadFromStore);
 # Apply Middleware
 
 As for Redux, middleware is a way to extend Redhooks with custom functionality.
-Middleware are functions which receive Store's `dispatch` and `getState` as named arguments, and return a function. Redhooks supports the use of the redux's middlwares like `redux-thunk`, `redux-saga` or you migth write a custom middlware conforming to middleware API. 
+Middleware are functions which receive Store's `dispatch` and `getState` as named arguments, and return a function. Redhooks supports the use of the redux's middlewares like `redux-thunk`, `redux-saga` or you migth write a custom middleware conforming to middleware API. 
 
-## Custom middlware - Logger Example
+## Custom middleware - Logger Example
 
 ```js
 const logger = store => next => action => {
@@ -369,7 +369,7 @@ ReactDOM.render(<App />, rootElement);
 createStore(reducer, [opts])
 ```
 `createStore` returns the store object to be passed to the `<Provider store={store} />`.
-* The `reducer` argument might be a single reducer function, a function returned by `combineReducers` or a plain object whose values are reducre functions if your store needs multiple reducers.
+* The `reducer` argument might be a single reducer function, a function returned by `combineReducers` or a plain object whose values are reducer functions if your store needs multiple reducers.
 * The `opts` optional argument is an object which allows you to pass a `preloadedState`, `initialAction` and `middlewares`.
 > The store is ready after the Provider is mounted, an `onload` event will be triggered at that time.
 
@@ -535,7 +535,7 @@ Following few open source projects implemented with `redux` have been migrated t
 * Shopping Cart: [Sandbox](https://codesandbox.io/s/5yn1258y4l)
 * TodoMVC: [Sandbox](https://codesandbox.io/s/7jyq991p90)
 * Tree-View: [Sandbox](https://codesandbox.io/s/rmw98onnlp)
-* Saga-Middlware: [Sandbox](https://codesandbox.io/s/48pomo7rx7)
+* Saga-Middleware: [Sandbox](https://codesandbox.io/s/48pomo7rx7)
 
 # License
 

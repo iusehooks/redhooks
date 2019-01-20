@@ -1,13 +1,17 @@
 import { createStore } from "../src/store";
-import { counterReducer } from "./helpers/reducers";
+import { counterReducer, plainReducersObj } from "./helpers/reducers";
 
 describe("createStore", () => {
-  it("should create a store and initialized the state given a reducer function", () => {
-    const store = createStore(counterReducer);
+  it("should create a store with the given reducer function or plain object", () => {
+    let store = createStore(counterReducer);
     expect(store.initialState).toBe(0);
+    store = createStore(plainReducersObj);
+    expect(store.initialState.counterReducer).toBe(0);
+    expect(store.initialState.genericReducer).toEqual({ a: 1 });
+    expect(store.initialState.todoReducer).toEqual([]);
   });
 
-  it("should throw if the reducer passed as argument is not a function", () => {
+  it("should throw if the reducer passed as argument is not a function or plain object", () => {
     expect(() => createStore(false)).toThrow();
     expect(() => createStore(undefined)).toThrow();
     expect(() => createStore(null)).toThrow();

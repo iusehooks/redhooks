@@ -1,4 +1,5 @@
 import { createContext, useContext } from "react";
+import combineReducers from "./combineReducers";
 import isPlainObject from "./utils/isPlainObject";
 import objValueFunc from "./utils/objValueFunc";
 
@@ -14,8 +15,9 @@ const Context = createContext();
  * parts of the state tree respond to actions, you may combine several reducers
  * into a single reducer function by using `combineReducers`.
  *
- * @param {Function} reducer A function that given an action and the current state it returns the next state tree.
- *
+ * @param {Function|Object} reducer A function that given an action and the current state it returns the next state tree.
+ * In case of multiple reducers this function may be created either by using `combineReducers` or by passing a plain object
+ * whose values are reducer functions.
  * @param {Object} opts You may optionally specify a preloadedState and/or dispatch an initilaAction and/or middlewares
  * @param {Object} opts.preloadedState - To initialize the store with a State.
  * @param {Object} opts.initilaAction - To dispatch an initialAction to the Store => { type: "INIT", payload: "Hello" }.
@@ -25,6 +27,10 @@ const Context = createContext();
  */
 
 export const createStore = (reducer, opts = {}) => {
+  if (isPlainObject(reducer)) {
+    reducer = combineReducers(reducer);
+  }
+
   if (typeof reducer !== "function") {
     throw new Error("The reducer must be a function");
   }

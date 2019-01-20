@@ -1,7 +1,7 @@
 # <img src='https://raw.githubusercontent.com/iusehooks/redhooks/master/logo/logo.png' width="224" height='61' alt='Redhooks Logo' />
 
 Redhooks is tiny React utility library for holding a predictable state container in your React apps. 
-Inspired by https://redux.js.org, it reimplements reduxjs concept using the experimental Hooks API and the Context API.
+Inspired by [Redux](https://redux.js.org), it reimplements redux concept by using the experimental Hooks API and the Context API.
 
 - [Motivation](#motivation)
 - [Basic Example](#basic-example)
@@ -21,7 +21,7 @@ npm install --save redhooks
 
 # Motivation
 
-In the https://reactjs.org/docs/hooks-custom.html docs a nice paragraph titled useYourImagination()  suggests to think on differents possible usages of the Hooks, this essentially is what Redhooks tries to do.
+In the [Reactjs docs](https://reactjs.org/docs/hooks-custom.html) a nice paragraph titled useYourImagination() suggests to think on differents possible usages of the Hooks, this essentially is what Redhooks tries to do.
 Redhooks does not use any third party library, it only depends on the new Hooks and the Context API.
 You do not need to install `react-redux` to connect your components to the store because you can have access to it directly from any of your function components by calling `useStore` Redhooks api.
 Hooks are not allowed within class Components, for using the store within them Redhooks exposes a HOC named `connect`.
@@ -65,12 +65,16 @@ const counter = (state = 0, { type, payload }) => {
   }
 };
 
+// You can use the combineReducers function
 const rootReducer = combineReducers({ hello, counter });
-
 const store = createStore(rootReducer);
+
+// or if you want to be less verbose you can pass a plain object whose values are reducer functions
+const store = createStore({ hello, counter });
+
 // eventually we can pass to createStore as second arg an opts object like:
 // const opts = { preloadedState: { counter: 10 }, initialAction: { type: "INCREMENT" } }
-// const store = createStore(rootReducer. opts);
+// const store = createStore(rootReducer, opts);
 
 export default store;
 ```
@@ -135,7 +139,7 @@ export default DispatchAction;
 ```
 
 ## Dispatching Sync and Async Actions - Expensive rendering operation
-For components wich perform expensive rendering the use of `connect` HOC helps to avoid unnecessary re-rendering.
+For components wich perform expensive rendering the use of `connect` HOC helps to avoid unnecessary re-renders.
 
 `./components/DispatchActionExpensive.js`
 ```js
@@ -365,8 +369,7 @@ ReactDOM.render(<App />, rootElement);
 createStore(reducer, [opts])
 ```
 `createStore` returns the store object to be passed to the `<Provider store={store} />`.
-* The `reducer` argument is the is your reducer function or a function returned by `combineReducers` if your
-store needs more then one reducer.
+* The `reducer` argument might be a single reducer function, a function returned by `combineReducers` or a plain object whose values are reducre functions if your store needs multiple reducers.
 * The `opts` optional argument is an object which allows you to pass a `preloadedState`, `initialAction` and `middlewares`.
 > The store is ready after the Provider is mounted, an `onload` event will be triggered at that time.
 

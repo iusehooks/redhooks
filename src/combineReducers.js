@@ -73,7 +73,7 @@ function invalidStateErrorMessage(key, action) {
 
 function areValidReducers(validReducers, reducersKeys) {
   if (validReducers.length === 0) {
-    return "The object passed as argument does not have valid reducer functions";
+    return "The object passed as argument does not have any valid reducer functions";
   }
 
   if (validReducers.length !== reducersKeys.length) {

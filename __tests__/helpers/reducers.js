@@ -26,3 +26,9 @@ export const genericReducer = (state = { a: 1 }, { type, payload }) => {
       return state;
   }
 };
+
+export const plainReducersObj = {
+  genericReducer,
+  todoReducer,
+  counterReducer
+};

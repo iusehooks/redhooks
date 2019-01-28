@@ -536,6 +536,7 @@ Following few open source projects implemented with `redux` have been migrated t
 * TodoMVC: [Sandbox](https://codesandbox.io/s/7jyq991p90)
 * Tree-View: [Sandbox](https://codesandbox.io/s/rmw98onnlp)
 * Saga-Middleware: [Sandbox](https://codesandbox.io/s/48pomo7rx7)
+* Redux-Thunk: [Sandbox](https://codesandbox.io/s/n02r5400mp)
 
 # License
 

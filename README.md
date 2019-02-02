@@ -21,11 +21,11 @@ npm install --save redhooks
 
 # Motivation
 
-In the [Reactjs docs](https://reactjs.org/docs/hooks-custom.html) a nice paragraph titled useYourImagination() suggests to think on differents possible usages of the Hooks, this essentially is what Redhooks tries to do.
+In the [Reactjs docs](https://reactjs.org/docs/hooks-custom.html) a paragraph titled useYourImagination() suggests to think on different possible usages of the Hooks, this essentially is what Redhooks tries to do.
 Redhooks does not use any third party library, it only depends on the new Hooks and the Context API.
-You do not need to install `react-redux` to connect your components to the store because you can have access to it directly from any of your function components by calling `useStore` Redhooks api.
+You do not need to install `react-redux` to connect your components to the store because you can access it directly from any of your function components by calling `useStore` Redhooks api.
 Hooks are not allowed within class Components, for using the store within them Redhooks exposes a HOC named `connect`.
-It also supports the use of middlewares like `redux-thunk` or `redux-saga` or your custom middleware conforming to the middleware's API.
+It also supports the use of middlewares like `redux-thunk`, `redux-saga` or your custom middleware, which must conform to the middleware's API.
 
 # Basic Example
 

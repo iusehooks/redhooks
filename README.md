@@ -1,8 +1,7 @@
 # <img src='https://raw.githubusercontent.com/iusehooks/redhooks/master/logo/logo.png' width="224" height='61' alt='Redhooks Logo' />
 
 Redhooks is tiny React utility library for holding a predictable state container in your React apps. 
-Inspired by [Redux](https://redux.js.org), it reimplements redux concept by using the experimental Hooks API and the Context API.
-
+Inspired by [Redux](https://redux.js.org), it reimplements the redux paradigm of state-management by using React's new Hooks and Context API, which have recently been [officially approved](https://github.com/facebook/react/pull/14679) by the React team.
 - [Motivation](#motivation)
 - [Basic Example](#basic-example)
 - [Apply Middleware](#apply-middleware)
@@ -21,17 +20,17 @@ npm install --save redhooks
 
 # Motivation
 
-In the [Reactjs docs](https://reactjs.org/docs/hooks-custom.html) a nice paragraph titled useYourImagination() suggests to think on differents possible usages of the Hooks, this essentially is what Redhooks tries to do.
-Redhooks does not use any third party library, it only depends on the new Hooks and the Context API.
-You do not need to install `react-redux` to connect your components to the store because you can have access to it directly from any of your function components by calling `useStore` Redhooks api.
-Hooks are not allowed within class Components, for using the store within them Redhooks exposes a HOC named `connect`.
-It also supports the use of middlewares like `redux-thunk` or `redux-saga` or your custom middleware conforming to the middleware's API.
+In the [Reactjs docs](https://reactjs.org/docs/hooks-custom.html) a nice paragraph titled _useYourImagination()_ suggests to think of different possible usages of functionality Hooks provide, which is essentially what Redhooks tries to do.
+This package does not use any third party library, being only dependendent upon the Hooks and the Context API.
+You do not need to install `react-redux` to connect your components to the store because you can have access to it directly from any of your function components by utilizing the `useStore` Redhooks API.
+Hooks are [not allowed within class Components](https://reactjs.org/docs/hooks-rules.html), for using the store within them Redhooks exposes a Higher Order Component (HOC) named `connect`.
+It also supports the use of middleware like `redux-thunk` or `redux-saga` or your own custom middleware conforming to the middleware's API.
 
 # Basic Example
 
-Redhooks follows the exact same principles of redux which is inspired to.
-* the whole state of your app is stored in an object tree inside a single store.
-* state is read only. So the only way to change the state is to dispatch an action, an object describing what happened.
+Redhooks follows the exact same principles of redux, which was the package's inspiration.
+* the total state of your app is stored in an object tree inside of a single store object.
+* state is _read only_, so the only way to change the state is to dispatch an [action](https://redux.js.org/basics/actions), an object describing the changes to be made to the state.
 * to specify how the actions transform the state tree, you write pure reducers.
 
 ## Store
@@ -98,9 +97,9 @@ const rootElement = document.getElementById("root");
 ReactDOM.render(<App />, rootElement);
 ```
 
-## Dispatching Sync and Async Actions - No expensive rendering operation
-If your component does not perform an expensive rendering you can use `useStore` Redhooks API within your
-function Component in order to have access to the Redhooks store. Class or function components that perform expensive rendering operations can be connected to the store by using `connect` Redhooks HOC which takes care to avoid unnecessary re-rendering in order to improve the performance. But we will see it in action in the next paragraph.
+## Dispatching Sync and Async Actions - Non-expensive rendering operation
+If your component does not require expensive rendering, you can use the `useStore` Redhooks API within your
+functional component in order to access the Redhooks store. Class or function components that perform expensive rendering operations can be connected to the store by using the `connect` Redhooks HOC which takes care to avoid unnecessary re-rendering in order to improve performance. We'll be able to see this in action below:
 
 `./components/DispatchAction.js`
 ```js
@@ -139,7 +138,7 @@ export default DispatchAction;
 ```
 
 ## Dispatching Sync and Async Actions - Expensive rendering operation
-For components wich perform expensive rendering the use of `connect` HOC helps to avoid unnecessary re-renders.
+For components requiring expensive rendering, the use of `connect` helps to avoid any unnecessary re-rendering.
 
 `./components/DispatchActionExpensive.js`
 ```js
@@ -185,7 +184,7 @@ const ReadFromStore = () => {
 export default ReadFromStore;
 ```
 
-> **Tips**: If your function component performs a expensive rendering you should use the `connect` HOC Redhooks API.
+> **Tip**: If your function component requires an expensive render, you should use the `connect` HOC Redhooks API.
 
 ## Use Store from a Class Component
 
@@ -217,8 +216,8 @@ export default connect(mapStateToProp)(ReadFromStore);
 
 # Apply Middleware
 
-As for Redux, middleware is a way to extend Redhooks with custom functionality.
-Middleware are functions which receive Store's `dispatch` and `getState` as named arguments, and return a function. Redhooks supports the use of the redux's middlewares like `redux-thunk`, `redux-saga` or you migth write a custom middleware conforming to middleware API. 
+As for Redux, [middleware](https://redux.js.org/advanced/middleware) is a way to extend Redhooks with custom functionality.
+Middleware are functions which receive the store's `dispatch` and `getState` as named arguments, and subsequently return a function. Redhooks supports the use of redux middleware like `[redux-thunk](https://www.npmjs.com/package/redux-thunk)`, `[redux-saga](https://www.npmjs.com/package/redux-saga)` or you could write custom middleware to conform to the middleware API. 
 
 ## Custom middleware - Logger Example
 
@@ -369,9 +368,9 @@ ReactDOM.render(<App />, rootElement);
 createStore(reducer, [opts])
 ```
 `createStore` returns the store object to be passed to the `<Provider store={store} />`.
-* The `reducer` argument might be a single reducer function, a function returned by `combineReducers` or a plain object whose values are reducer functions if your store needs multiple reducers.
+* The `reducer` argument might be a single reducer function, a function returned by `combineReducers` or a plain object whose values are reducer functions (if your store requires multiple reducers).
 * The `opts` optional argument is an object which allows you to pass a `preloadedState`, `initialAction` and `middlewares`.
-> The store is ready after the Provider is mounted, an `onload` event will be triggered at that time.
+> The store is ready when the `Provider` is mounted, after which an `onload` event will be triggered.
 
 #### Example
 ```js
@@ -401,10 +400,10 @@ const store = createStore(rootReducer)
 ```js
 connect([mapStateToProps], [mapDispatchToProps])
 ```
-`connect` function connects a React component to a Redhooks store. It returns a connected component class that wraps the component you passed in taking care to avoid unnecessary re-rendering. It should be used if your class or function components perform expensive rendering.
+`connect` function connects a React component to a Redhooks store. It returns a connected component class that wraps the component you passed in taking care to avoid unnecessary re-rendering. It should be used if your class or function components require expensive rendering.
 
-* If a `mapStateToProps` function is passed, your component will be subscribed to Redhooks store. Any time the store is updated, mapStateToProps will be called. The results of mapStateToProps must be a plain object, which will be merged into your component’s props. If you don't want to connect to Redhooks store, pass null or undefined in place of mapStateToProps.
-* `mapDispatchToProps` if passed may be either a function that must return a plain object whose values are functions or a plain object whose values are [action creator](#action-creator) functions. In both cases the props of the returned object will be merged in your component’s props. If is not passed your component will receive `dispatch` prop by default.
+* If a `mapStateToProps` function is passed, your component will be subscribed to Redhooks store. Any time the store is updated, `mapStateToProps` will be called. The results of `mapStateToProps` must be a plain object, which will be merged into your component’s props. If you don't want to connect to Redhooks store, pass null or undefined in place of mapStateToProps.
+* `mapDispatchToProps`, if passed, may be either a function that returns a plain object whose values, themselves, are functions or a plain object whose values are [action creator](#action-creator) functions. In both cases the props of the returned object will be merged in your component’s props. If is not passed your component will receive `dispatch` prop by default.
 
 #### Example
 ```js
@@ -421,12 +420,12 @@ export default connect(mapStateToProps, mapDispatchToProps)(ReactComponent)
 bindActionCreators(actionCreators, dispatch)
 ```
 
-`bindActionCreators` turns an object whose values are [action creator](#action-creator), into an object with the
-same keys, but with every function wrapped into a `dispatch` call so they
+`bindActionCreators` turns an object whose values are [action creators](#action-creator) into an object with the
+same keys, but with every function wrapped in a `dispatch` call so they
 may be invoked directly.
  
 * `actionCreators` An object whose values are action creator functions or plain objects whose values are action creator functions
-* `dispatch` it is the dispatch function available on your Redhooks store.
+* `dispatch` The dispatch function available on your Redhooks store.
 
 #### Action creator
 An action creator is a function that creates an action.

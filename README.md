@@ -11,7 +11,7 @@ Inspired by [Redux](https://redux.js.org), it reimplements the redux paradigm of
 - [CodeSandbox Examples](#codesandbox-examples)
 - [License](#license)
 
-[![Build Status](https://travis-ci.org/iusehooks/redhooks.svg?branch=master)](https://travis-ci.org/iusehooks/redhooks)
+[![Build Status](https://travis-ci.org/iusehooks/redhooks.svg?branch=master)](https://travis-ci.org/iusehooks/redhooks) [![Package size](https://img.shields.io/bundlephobia/minzip/redhooks.svg)](https://bundlephobia.com/result?p=redhooks)
 
 # Installation
 ```sh

@@ -11,7 +11,7 @@ Inspired by [Redux](https://redux.js.org), it reimplements the redux paradigm of
 - [CodeSandbox Examples](#codesandbox-examples)
 - [License](#license)
 
-[![Build Status](https://travis-ci.org/iusehooks/redhooks.svg?branch=master)](https://travis-ci.org/iusehooks/redhooks) [![Package size](https://img.shields.io/bundlephobia/minzip/redhooks.svg)](https://bundlephobia.com/result?p=redhooks)
+[![Build Status](https://travis-ci.org/iusehooks/redhooks.svg?branch=master)](https://travis-ci.org/iusehooks/redhooks) [![Package size](https://img.shields.io/bundlephobia/minzip/redhooks.svg)](https://bundlephobia.com/result?p=redhooks) [![Coverage Status](https://coveralls.io/repos/github/iusehooks/redhooks/badge.svg?branch=master)](https://coveralls.io/github/iusehooks/redhooks?branch=master) ![License](https://img.shields.io/npm/l/redhooks.svg?style=flat) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Predictable%20state%20container%20for%20React%20apps%20written%20using%20Hooks&url=https://github.com/iusehooks/redhooks&hashtags=reactjs,webdev,javascript)
 
 # Installation
 ```sh
@@ -217,7 +217,7 @@ export default connect(mapStateToProp)(ReadFromStore);
 # Apply Middleware
 
 As for Redux, [middleware](https://redux.js.org/advanced/middleware) is a way to extend Redhooks with custom functionality.
-Middleware are functions which receive the store's `dispatch` and `getState` as named arguments, and subsequently return a function. Redhooks supports the use of redux middleware like `[redux-thunk](https://www.npmjs.com/package/redux-thunk)`, `[redux-saga](https://www.npmjs.com/package/redux-saga)` or you could write custom middleware to conform to the middleware API. 
+Middleware are functions which receive the store's `dispatch` and `getState` as named arguments, and subsequently return a function. Redhooks supports the use of redux middleware like [redux-thunk](https://www.npmjs.com/package/redux-thunk), [redux-saga](https://www.npmjs.com/package/redux-saga) or you could write custom middleware to conform to the middleware API. 
 
 ## Custom middleware - Logger Example
 

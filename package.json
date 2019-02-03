@@ -13,7 +13,8 @@
     "pretest": "npm run lint",
     "test": "cross-env NODE_ENV=test jest -u",
     "test:watch": "npm run test -- --watch",
-    "test:cov": "npm test -- --coverage"
+    "test:cov": "npm test -- --coverage",
+    "coveralls": "npm run test:cov && cat ./coverage/lcov.info | coveralls"
   },
   "author": "Antonio Pangallo (https://github.com/antoniopangallo)",
   "files": [
@@ -42,6 +43,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "child_process": "^1.0.2",
+    "coveralls": "^3.0.2",
     "cross-env": "^5.2.0",
     "eslint": "^5.11.1",
     "eslint-config-prettier": "^3.3.0",

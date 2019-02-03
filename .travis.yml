@@ -8,3 +8,5 @@ branches:
   only:
     - master
 cache: npm
+after_success:
+- npm run coveralls

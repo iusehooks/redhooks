@@ -1,7 +1,7 @@
 # <img src='https://raw.githubusercontent.com/iusehooks/redhooks/master/logo/logo.png' width="224" height='61' alt='Redhooks Logo' />
 
 Redhooks is tiny React utility library for holding a predictable state container in your React apps. 
-Inspired by [Redux](https://redux.js.org), it reimplements the redux paradigm of state-management by using React's new Hooks and Context API, which have recently been [officially approved](https://github.com/facebook/react/pull/14679) by the React team.
+Inspired by [Redux](https://redux.js.org), it reimplements the redux paradigm of state-management by using React's new Hooks and Context API, which have been [officially released](https://reactjs.org/docs/hooks-reference.html) by the React team.
 - [Motivation](#motivation)
 - [Basic Example](#basic-example)
 - [Apply Middleware](#apply-middleware)

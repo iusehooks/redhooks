@@ -1,7 +1,8 @@
-import React, { useMemo, useState, useRef } from "react";
-import { useStore } from "./store";
+import React, { PureComponent } from "react";
 import isPlainObject from "./utils/isPlainObject";
+import shallowEqual from "./utils/shallowEqual";
 import bindActionCreators from "./bindActionCreators";
+import { Context } from "./store";
 
 /**
  * `connect` is a HOC which connects a React Component to the Redhooks store.
@@ -44,69 +45,91 @@ export default (
     );
   }
 
-  return Comp => props => {
-    const { state, dispatch } = useStore();
+  return Comp =>
+    class Connect extends PureComponent {
+      _innerState = {
+        changeMapProp: false,
+        prevMapPropChange: false,
+        changeOwnProp: false,
+        prevOwnPropsChange: false,
+        prevMapProps: {},
+        prevOwnProps: this.props
+      };
 
-    const propsMapped = mapStateToProps(state, props);
+      _render = value => {
+        const { state, dispatch } = value;
+        const propsMapped = mapStateToProps(state, this.props);
 
-    /* useRef returns a mutable ref object whose .current property is initialized
-     * to the passed argument (initialValue). The returned object will persist for
-     * the full lifetime of the component.
-     */
-    const { current: innerState } = useRef({
-      change: false,
-      prevProps: propsMapped
-    });
+        // const propsMapped = {...this.props, ...propsMapped1};
 
-    if (!isPlainObject(propsMapped)) {
-      throw new Error(
-        errMsg(
-          "mapStateToProps",
+        if (!isPlainObject(propsMapped)) {
+          throw new Error(
+            errMsg(
+              "mapStateToProps",
+              propsMapped,
+              "must return a plain object",
+              Comp.name
+            )
+          );
+        }
+
+        if (!this._dispatchProps) {
+          const propsDispatch = mapDispatchToProps(dispatch, this.props);
+          if (!isPlainObject(propsDispatch)) {
+            throw new Error(
+              errMsg(
+                "mapDispatchToProps",
+                propsDispatch,
+                "must return a plain object",
+                Comp.name
+              )
+            );
+          }
+          this._dispatchProps =
+            Object.keys(propsDispatch).length > 0
+              ? propsDispatch
+              : { dispatch };
+        }
+
+        this._innerState.changeMapProp = shallowEqual(
           propsMapped,
-          "must return a plain object",
-          Comp.name
+          this._innerState.prevMapProps
         )
-      );
-    }
+          ? this._innerState.changeMapProp
+          : !this._innerState.changeMapProp;
+        this._innerState.changeOwnProp = shallowEqual(
+          this.props,
+          this._innerState.prevOwnProps
+        )
+          ? this._innerState.changeOwnProp
+          : !this._innerState.changeOwnProp;
 
-    const [dispatchProps] = useState(() => {
-      const propsDispatch = mapDispatchToProps(dispatch, props);
-      if (!isPlainObject(propsDispatch)) {
-        throw new Error(
-          errMsg(
-            "mapDispatchToProps",
-            propsDispatch,
-            "must return a plain object",
-            Comp.name
-          )
-        );
+        this._innerState.prevMapProps = propsMapped;
+        this._innerState.prevOwnProps = this.props;
+
+        if (
+          this._innerState.prevMapPropChange !==
+            this._innerState.changeMapProp ||
+          this._innerState.prevOwnPropsChange !==
+            this._innerState.changeOwnProp ||
+          !this._wrapper
+        ) {
+          this._innerState.prevMapPropChange = this._innerState.changeMapProp;
+          this._innerState.prevOwnPropsChange = this._innerState.changeOwnProp;
+
+          this._wrapper = (
+            <Comp {...this.props} {...propsMapped} {...this._dispatchProps} />
+          );
+        }
+
+        return this._wrapper;
+      };
+
+      render() {
+        return <Context.Consumer>{this._render}</Context.Consumer>;
       }
-      const { length } = Object.keys(propsDispatch);
-      return length > 0 ? propsDispatch : { dispatch };
-    });
-
-    innerState.change = checkPropChange(
-      propsMapped,
-      innerState.prevProps,
-      innerState.change
-    );
-
-    innerState.prevProps = propsMapped;
-
-    const CPM = useMemo(
-      () => <Comp {...props} {...propsMapped} {...dispatchProps} />,
-      [innerState.change]
-    );
-    return CPM;
-  };
+    };
 };
-
-function checkPropChange(propsMapped, prevPropsMapped, change) {
-  const changeHappened = Object.keys(propsMapped).some(
-    key => propsMapped[key] !== prevPropsMapped[key]
-  );
-  return changeHappened ? !change : change;
-}
 
 function bindFunctionActions(mapDispatchToProps) {
   return dispatch => bindActionCreators({ ...mapDispatchToProps }, dispatch);

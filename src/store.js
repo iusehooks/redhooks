@@ -3,7 +3,7 @@ import combineReducers from "./combineReducers";
 import isPlainObject from "./utils/isPlainObject";
 import objValueFunc from "./utils/objValueFunc";
 
-const Context = createContext();
+export const Context = createContext();
 
 /**
  * Creates a Redhooks store that holds the state tree.
@@ -71,7 +71,7 @@ export const createStore = (reducer, opts = {}) => {
   // reducer returns their initial state to populate the initial state tree.
   let initialState = reducer(preloadedState, initialAction);
 
-  return { initialState, reducer, Context, middlewares };
+  return { initialState, reducer, middlewares };
 };
 
 /**

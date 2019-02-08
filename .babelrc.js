@@ -13,7 +13,7 @@ let presets = [
   "@babel/preset-react"
 ];
 
-let plugins = [];
+let plugins = ["@babel/plugin-proposal-class-properties"];
 if (process.env.NODE_ENV === "test") {
   plugins.push("@babel/transform-modules-commonjs");
 }

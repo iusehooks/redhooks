@@ -1,7 +1,8 @@
 # <img src='https://raw.githubusercontent.com/iusehooks/redhooks/master/logo/logo.png' width="224" height='61' alt='Redhooks Logo' />
 
-Redhooks is tiny React utility library for holding a predictable state container in your React apps. 
+Redhooks is a tiny React utility library for holding a predictable state container in your React apps. 
 Inspired by [Redux](https://redux.js.org), it reimplements the redux paradigm of state-management by using React's new Hooks and Context API, which have been [officially released](https://reactjs.org/docs/hooks-reference.html) by the React team.
+
 - [Motivation](#motivation)
 - [Basic Example](#basic-example)
 - [Apply Middleware](#apply-middleware)
@@ -20,8 +21,8 @@ npm install --save redhooks
 
 # Motivation
 
-In the [Reactjs docs](https://reactjs.org/docs/hooks-custom.html) a nice paragraph titled _useYourImagination()_ suggests to think of different possible usages of functionality Hooks provide, which is essentially what Redhooks tries to do.
-This package does not use any third party library, being only dependendent upon the Hooks and the Context API.
+In the [Reactjs docs](https://reactjs.org/docs/hooks-custom.html) a nice paragraph titled _useYourImagination()_ suggests thinking of different possible usages of functionality Hooks provide, which is essentially what Redhooks tries to do.
+This package does not use any third party library, being only dependent upon the Hooks and the Context API.
 You do not need to install `react-redux` to connect your components to the store because you can have access to it directly from any of your function components by utilizing the `useStore` Redhooks API.
 Hooks are [not allowed within class Components](https://reactjs.org/docs/hooks-rules.html), for using the store within them Redhooks exposes a Higher Order Component (HOC) named `connect`.
 It also supports the use of middleware like `redux-thunk` or `redux-saga` or your own custom middleware conforming to the middleware's API.
@@ -217,7 +218,7 @@ export default connect(mapStateToProp)(ReadFromStore);
 # Apply Middleware
 
 As for Redux, [middleware](https://redux.js.org/advanced/middleware) is a way to extend Redhooks with custom functionality.
-Middleware are functions which receive the store's `dispatch` and `getState` as named arguments, and subsequently return a function. Redhooks supports the use of redux middleware like [redux-thunk](https://www.npmjs.com/package/redux-thunk), [redux-saga](https://www.npmjs.com/package/redux-saga) or you could write custom middleware to conform to the middleware API. 
+Middleware is functions which receive the store's `dispatch` and `getState` as named arguments and subsequently return a function. Redhooks supports the use of redux middleware like [redux-thunk](https://www.npmjs.com/package/redux-thunk), [redux-saga](https://www.npmjs.com/package/redux-saga) or you could write custom middleware to conform to the middleware API. 
 
 ## Custom middleware - Logger Example
 
@@ -403,7 +404,7 @@ connect([mapStateToProps], [mapDispatchToProps])
 `connect` function connects a React component to a Redhooks store. It returns a connected component class that wraps the component you passed in taking care to avoid unnecessary re-rendering. It should be used if your class or function components require expensive rendering.
 
 * If a `mapStateToProps` function is passed, your component will be subscribed to Redhooks store. Any time the store is updated, `mapStateToProps` will be called. The results of `mapStateToProps` must be a plain object, which will be merged into your component’s props. If you don't want to connect to Redhooks store, pass null or undefined in place of mapStateToProps.
-* `mapDispatchToProps`, if passed, may be either a function that returns a plain object whose values, themselves, are functions or a plain object whose values are [action creator](#action-creator) functions. In both cases the props of the returned object will be merged in your component’s props. If is not passed your component will receive `dispatch` prop by default.
+* `mapDispatchToProps`, if passed, may be either a function that returns a plain object whose values, themselves, are functions or a plain object whose values are [action creator](#action-creator) functions. In both cases, the props of the returned object will be merged in your component’s props. It is not passed your component will receive `dispatch` prop by default.
 
 #### Example
 ```js
@@ -428,7 +429,7 @@ may be invoked directly.
 * `dispatch` The dispatch function available on your Redhooks store.
 
 #### Action creator
-An action creator is a function that creates an action.
+An action creator is a function that creates action.
 
 ```js
 type ActionCreator = (...args: any) => Action | AsyncAction

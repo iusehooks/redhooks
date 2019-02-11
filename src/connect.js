@@ -47,11 +47,9 @@ export default (
 
   return Comp =>
     class Connect extends PureComponent {
-      _innerState = {
+      _state = {
         changeMapProp: false,
-        prevMapPropChange: false,
         changeOwnProp: false,
-        prevOwnPropsChange: false,
         prevMapProps: {},
         prevOwnProps: this.props
       };
@@ -59,8 +57,6 @@ export default (
       _render = value => {
         const { state, dispatch } = value;
         const propsMapped = mapStateToProps(state, this.props);
-
-        // const propsMapped = {...this.props, ...propsMapped1};
 
         if (!isPlainObject(propsMapped)) {
           throw new Error(
@@ -91,34 +87,37 @@ export default (
               : { dispatch };
         }
 
-        this._innerState.changeMapProp = shallowEqual(
+        const changeMapProp = checkChanges(
           propsMapped,
-          this._innerState.prevMapProps
-        )
-          ? this._innerState.changeMapProp
-          : !this._innerState.changeMapProp;
-        this._innerState.changeOwnProp = shallowEqual(
+          this._state.prevMapProps,
+          this._state.changeMapProp
+        );
+
+        const changeOwnProp = checkChanges(
           this.props,
-          this._innerState.prevOwnProps
-        )
-          ? this._innerState.changeOwnProp
-          : !this._innerState.changeOwnProp;
+          this._state.prevOwnProps,
+          this._state.changeOwnProp
+        );
 
-        this._innerState.prevMapProps = propsMapped;
-        this._innerState.prevOwnProps = this.props;
+        this._state.prevMapProps = propsMapped;
+        this._state.prevOwnProps = this.props;
 
+        /* istanbul ignore else */
         if (
-          this._innerState.prevMapPropChange !==
-            this._innerState.changeMapProp ||
-          this._innerState.prevOwnPropsChange !==
-            this._innerState.changeOwnProp ||
+          changeMapProp !== this._state.changeMapProp ||
+          changeOwnProp !== this._state.changeOwnProp ||
           !this._wrapper
         ) {
-          this._innerState.prevMapPropChange = this._innerState.changeMapProp;
-          this._innerState.prevOwnPropsChange = this._innerState.changeOwnProp;
-
+          this._state.changeMapProp = changeMapProp;
+          this._state.changeOwnProp = changeOwnProp;
+          const { _ref, ...props } = this.props;
           this._wrapper = (
-            <Comp {...this.props} {...propsMapped} {...this._dispatchProps} />
+            <Comp
+              ref={_ref}
+              {...props}
+              {...propsMapped}
+              {...this._dispatchProps}
+            />
           );
         }
 
@@ -130,6 +129,10 @@ export default (
       }
     };
 };
+
+function checkChanges(newProps, prevProps, status) {
+  return shallowEqual(newProps, prevProps) ? status : !status;
+}
 
 function bindFunctionActions(mapDispatchToProps) {
   return dispatch => bindActionCreators({ ...mapDispatchToProps }, dispatch);

@@ -4,7 +4,9 @@ import { render, fireEvent } from "react-testing-library";
 import Provider, { connect } from "./../src";
 import {
   BasicComponent,
-  BasicComponentNoMapDispatch
+  BasicComponentNoMapDispatch,
+  WrapperChangeOwnProp,
+  IncrementClassCPM
 } from "./helpers/components";
 import { store } from "./helpers/store";
 
@@ -98,6 +100,34 @@ describe("Utils => connect", () => {
     expect(button.textContent).toBe("0");
     fireEvent.click(button);
     expect(button.textContent).toBe("1");
+  });
+
+  it("should pass a ref to a connected Component", () => {
+    const ref = React.createRef();
+    const name = "test";
+    render(
+      <Provider store={store}>
+        <IncrementClassCPM ref={ref} name={name} />
+      </Provider>
+    );
+    expect(ref.current).not.toBeNull();
+    expect(ref.current.props.name).toBe(name);
+  });
+
+  it("should change the own props of a connected Component", () => {
+    const ref = React.createRef();
+    const wrapper = render(
+      <Provider store={store}>
+        <WrapperChangeOwnProp ref={ref} />
+      </Provider>
+    );
+    ref.current.updateCounter(1);
+
+    let button = wrapper.container.firstChild;
+    expect(button.textContent).toBe("1");
+    ref.current.updateCounter(2);
+    button = wrapper.container.firstChild;
+    expect(button.textContent).toBe("2");
   });
 
   it("should throw if mapStateToProps returns a wrong type", () => {

@@ -27,6 +27,21 @@ function mapStateToProps(state) {
 
 export const IncrementClassCPM = connect(mapStateToProps)(IncrementConnected);
 
+const ConnectedOwnPropChange = connect()(IncrementConnected);
+export class WrapperChangeOwnProp extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { counterReducer: 0 };
+  }
+  updateCounter(counterReducer) {
+    this.setState({ counterReducer });
+  }
+  render() {
+    const { counterReducer } = this.state;
+    return <ConnectedOwnPropChange counterReducer={counterReducer} />;
+  }
+}
+
 export const BasicComponent = props => (
   <button onClick={() => props.increment("INCREMENT")}>
     {props.counterReducer}

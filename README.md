@@ -1,6 +1,6 @@
 # <img src='https://raw.githubusercontent.com/iusehooks/redhooks/master/logo/logo.png' width="224" height='61' alt='Redhooks Logo' />
 
-Redhooks is tiny React utility library for holding a predictable state container in your React apps. 
+Redhooks is a tiny React utility library for holding a predictable state container in your React apps. 
 Inspired by [Redux](https://redux.js.org), it reimplements the redux paradigm of state-management by using React's new Hooks and Context API, which have been [officially released](https://reactjs.org/docs/hooks-reference.html) by the React team.
 - [Motivation](#motivation)
 - [Basic Example](#basic-example)
@@ -21,7 +21,7 @@ npm install --save redhooks
 # Motivation
 
 In the [Reactjs docs](https://reactjs.org/docs/hooks-custom.html) a nice paragraph titled _useYourImagination()_ suggests to think of different possible usages of functionality Hooks provide, which is essentially what Redhooks tries to do.
-This package does not use any third party library, being only dependendent upon the Hooks and the Context API.
+This package does not use any third party library, being only dependent upon the Hooks and the Context API.
 You do not need to install `react-redux` to connect your components to the store because you can have access to it directly from any of your function components by utilizing the `useStore` Redhooks API.
 Hooks are [not allowed within class Components](https://reactjs.org/docs/hooks-rules.html), for using the store within them Redhooks exposes a Higher Order Component (HOC) named `connect`.
 It also supports the use of middleware like `redux-thunk` or `redux-saga` or your own custom middleware conforming to the middleware's API.
